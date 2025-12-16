@@ -27,7 +27,6 @@ export default function App() {
   ];
 
   useEffect(() => {
-    // FIX: Explicitly type the interval variable
     let interval: ReturnType<typeof setInterval>;
     
     if (isLoading) {
@@ -92,10 +91,8 @@ export default function App() {
   };
 
   return (
-    // SUGGESTION: Added relative positioning and grid background here
     <div className="font-display bg-[#09090b] text-zinc-100 min-h-screen selection:bg-emerald-500/30 selection:text-emerald-200 relative">
       
-      {/* BACKGROUND GRID */}
       <div className="fixed inset-0 z-0 pointer-events-none">
          <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
          <div className="absolute inset-0 bg-gradient-to-t from-[#09090b] via-transparent to-transparent"></div>

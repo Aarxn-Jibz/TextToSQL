@@ -1,5 +1,5 @@
-# Text To SQl
-An application that does exactly what it's name says it does. The front end is made using react and tailwind while the backend is completely written in python. We used the help of qwen-32B model to convert the text to SQL. This project was initially built for a Speakspace hackathon with the help of **[@anadhikag](https://github.com/anadhikag)**, **[@AnnaIsson](https://github.com/AnnaIsson)** and **[@joel-dsilva](https://github.com/joel-dsilva)** and we decided to make a frontend for it as it would help us out in Data Base Management Systems. You can access the website [here](https://texttosql.pages.dev/). 
+![alt text](image-4.png)
+An application that converts text to sql. The front end is made using react and tailwind while the backend is completely written in python. We used the help of qwen-32B model to convert the text to SQL. This project was initially built for a Speakspace hackathon with the help of **[@anadhikag](https://github.com/anadhikag)**, **[@AnnaIsson](https://github.com/AnnaIsson)** and **[@joel-dsilva](https://github.com/joel-dsilva)** and we decided to make a frontend for it as it would help us out in Data Base Management Systems. You can access the website [here](https://texttosql.pages.dev/). 
 
 ### Output screenshots
 ![alt text](image-2.png)
