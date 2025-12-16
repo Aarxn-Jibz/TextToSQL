@@ -26,16 +26,16 @@ export default function App() {
       }
 
       const data = await response.json();
-
-      let sqlText = data.message || "";
       
+      let sqlText = data.message || data.result || data.sql_query || "";
       sqlText = sqlText.replace(/^SQL:\s*/, '');
       
       setOutput(sqlText || JSON.stringify(data, null, 2));
       
     } catch (error) {
       console.error("API Error details:", error);
-      setOutput(`Error: ${error.message}. Check console (F12) for details.`);
+      // FIXED: Added (error as Error) to satisfy TypeScript
+      setOutput(`Error: ${(error as Error).message}. Check console (F12) for details.`);
     }
   };
 
