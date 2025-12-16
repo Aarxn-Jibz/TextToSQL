@@ -27,7 +27,9 @@ export default function App() {
   ];
 
   useEffect(() => {
-    let interval;
+    // FIX: Explicitly type the interval variable
+    let interval: ReturnType<typeof setInterval>;
+    
     if (isLoading) {
       setLoadingStep(0);
       interval = setInterval(() => {
@@ -80,9 +82,26 @@ export default function App() {
     }
   };
 
+  // SUGGESTION: Handle Ctrl + Enter to submit
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+      if (prompt && !isLoading) {
+        generateSQL();
+      }
+    }
+  };
+
   return (
-    <div className="font-display bg-[#09090b] text-zinc-100 min-h-screen selection:bg-emerald-500/30 selection:text-emerald-200">
-      <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+    // SUGGESTION: Added relative positioning and grid background here
+    <div className="font-display bg-[#09090b] text-zinc-100 min-h-screen selection:bg-emerald-500/30 selection:text-emerald-200 relative">
+      
+      {/* BACKGROUND GRID */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+         <div className="absolute inset-0 bg-gradient-to-t from-[#09090b] via-transparent to-transparent"></div>
+      </div>
+
+      <div className="relative z-10 flex min-h-screen w-full flex-col overflow-x-hidden">
 
         <header className="sticky top-0 z-50 w-full border-b border-white/5 bg-[#09090b]/80 backdrop-blur-xl">
           <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between px-6">
@@ -120,10 +139,11 @@ export default function App() {
 
                   <div className="relative flex-1 group">
                     <textarea
+                      onKeyDown={handleKeyDown} // Added Key Handler
                       className="font-mono w-full h-full min-h-[300px] resize-none bg-transparent p-6 text-base text-zinc-300 placeholder:text-zinc-700 focus:outline-none focus:bg-white/[0.01] transition-colors"
                       value={prompt}
                       onChange={(e) => setPrompt(e.target.value)}
-                      placeholder="Enter your data requirement here..."
+                      placeholder="Enter your data requirement here... (Ctrl + Enter to run)"
                     ></textarea>
 
                     {prompt && (
