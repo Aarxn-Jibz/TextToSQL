@@ -1,13 +1,18 @@
 import { useState } from 'react';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 export default function App() {
   const [output, setOutput] = useState("");
   const [prompt, setPrompt] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
 
   const generateSQL = async () => {
     if (!prompt) return;
     
-    setOutput("Generating..."); 
+    setIsLoading(true);
+    setOutput(""); 
 
     try {
       const response = await fetch('https://speakspacevoicetosql.onrender.com/process-voice', {
@@ -34,8 +39,20 @@ export default function App() {
       
     } catch (error) {
       console.error("API Error details:", error);
-      // FIXED: Added (error as Error) to satisfy TypeScript
       setOutput(`Error: ${(error as Error).message}. Check console (F12) for details.`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCopy = async () => {
+    if (!output) return;
+    try {
+      await navigator.clipboard.writeText(output);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
     }
   };
 
@@ -100,36 +117,65 @@ export default function App() {
                 <div className="relative z-10 bg-surface px-4">
                   <button
                     onClick={generateSQL}
-                    className="group flex min-w-[180px] cursor-pointer items-center justify-center gap-2 rounded-full bg-primary py-3 px-8 text-base font-bold text-black shadow-lg shadow-primary/30 transition-all hover:bg-[#51b34b] hover:shadow-primary/40 hover:-translate-y-0.5"
+                    disabled={isLoading}
+                    className="group flex min-w-[180px] cursor-pointer items-center justify-center gap-2 rounded-full bg-primary py-3 px-8 text-base font-bold text-black shadow-lg shadow-primary/30 transition-all hover:bg-[#51b34b] hover:shadow-primary/40 hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:translate-y-0"
                   >
-                    <span>Generate SQL</span>
+                    {isLoading ? (
+                      <>
+                        <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span>Processing...</span>
+                      </>
+                    ) : (
+                      <span>Generate SQL</span>
+                    )}
                   </button>
                 </div>
               </div>
 
-              <div className="relative overflow-hidden rounded-xl bg-code-bg shadow-inner border border-secondary/20">
+              <div className="relative overflow-hidden rounded-xl bg-[#1e1e1e] shadow-inner border border-secondary/20">
                 <div className="flex items-center justify-between border-b border-secondary/20 bg-surface-highlight px-4 py-3">
                   <div className="flex items-center gap-2">
                     <span className="material-symbols-outlined text-primary text-[18px]">code</span>
                     <span className="text-xs font-bold uppercase tracking-wider text-secondary">Generated Code</span>
                   </div>
                   <div className="flex gap-2">
-                    <button className="flex items-center gap-1.5 rounded-md bg-secondary/10 border border-secondary/20 px-3 py-1.5 text-xs font-medium text-primary hover:bg-secondary/20 transition-colors">
-                      <span className="material-symbols-outlined text-[16px]">content_copy</span>
-                      Copy
+                    <button 
+                      onClick={handleCopy}
+                      className="flex items-center gap-1.5 rounded-md bg-secondary/10 border border-secondary/20 px-3 py-1.5 text-xs font-medium text-primary hover:bg-secondary/20 transition-colors"
+                    >
+                      <span className="material-symbols-outlined text-[16px]">
+                        {isCopied ? 'check' : 'content_copy'}
+                      </span>
+                      {isCopied ? 'Copied!' : 'Copy'}
                     </button>
                   </div>
                 </div>
-                <div className="relative min-h-[200px] w-full p-0">
-                  <div className="font-nerd absolute left-0 top-0 bottom-0 w-12 bg-code-bg border-r border-secondary/10 py-6 text-right pr-3 text-xs text-secondary/50 select-none">
-                    1<br />2<br />3
-                  </div>
-                  <textarea
-                    className="font-nerd h-full w-full min-h-[200px] resize-none bg-code-bg pl-16 pr-6 py-6 text-sm text-primary focus:outline-none selection:bg-primary/20 placeholder:text-secondary/40"
-                    readOnly
-                    value={output}
-                    placeholder="Output will be generated here..."
-                  ></textarea>
+                <div className="relative min-h-[200px] w-full bg-[#1e1e1e]">
+                  {output ? (
+                    <SyntaxHighlighter 
+                      language="sql" 
+                      style={vscDarkPlus}
+                      customStyle={{
+                        margin: 0,
+                        padding: '1.5rem',
+                        background: 'transparent',
+                        fontSize: '0.875rem',
+                        lineHeight: '1.5',
+                        minHeight: '200px'
+                      }}
+                      showLineNumbers={true}
+                      lineNumberStyle={{ minWidth: '2.5em', paddingRight: '1em', color: '#666', textAlign: 'right' }}
+                    >
+                      {output}
+                    </SyntaxHighlighter>
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center text-secondary/40 select-none pointer-events-none">
+                      <span className="text-sm">Output will be generated here...</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
