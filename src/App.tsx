@@ -10,7 +10,7 @@ export default function App() {
     setOutput("Generating..."); 
 
     try {
-      const response = await fetch('/api/process-voice', {
+      const response = await fetch('https://speakspacevoicetosql.onrender.com/process-voice', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
