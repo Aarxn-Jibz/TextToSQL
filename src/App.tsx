@@ -168,7 +168,6 @@ export default function App() {
                           </>
                         ) : (
                           <>
-                            <span className="material-symbols-outlined text-[18px]">bolt</span>
                             <span>GENERATE SQL</span>
                           </>
                         )}
